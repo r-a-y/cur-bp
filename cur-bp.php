@@ -35,6 +35,7 @@ class CUR_BP {
 		// Set up admin area if in the WP dashboard
 		if ( is_admin() && ! defined( 'DOING_AJAX' ) ) {
 			CUR_BP_Admin_Settings::init();
+			add_action( 'confirm-user-registration-auth-user', 'bp_core_new_user_activity' );
 		}
 	}
 
@@ -73,6 +74,10 @@ class CUR_BP {
 			add_filter( 'wpmu_welcome_user_notification', '__return_false' );
 			add_filter( 'gettext',                        array( $this, 'modify_activation_text' ), 10, 2 );
 			add_action( 'bp_after_activate_content',      array( $this, 'add_signup_blurb' ) );
+
+			// do not record "became a registered member" activity item
+			// we'll add it back when an admin confirms the user
+			remove_action( 'bp_core_activated_user', 'bp_core_new_user_activity' );
 		}
 
 	}
